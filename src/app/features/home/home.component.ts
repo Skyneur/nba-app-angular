@@ -14,22 +14,22 @@ export class HomeComponent {
     {
       icon: 'bi-search',
       title: 'Recherche avancée',
-      description: 'Trouvez rapidement vos joueurs préférés avec notre système de recherche en temps réel.'
+      description: 'Trouvez rapidement vos joueurs préférés avec notre système de recherche instantanée.'
+    },
+    {
+      icon: 'bi-sort-down',
+      title: 'Tri puissant',
+      description: 'Triez les joueurs par nom, équipe, position ou nationalité en un clic.'
     },
     {
       icon: 'bi-person-badge',
       title: 'Profils détaillés',
-      description: 'Consultez toutes les informations sur les joueurs NBA : position, équipe, statistiques, etc.'
+      description: 'Consultez les informations complètes : position, équipe, taille, poids, nationalité.'
     },
     {
-      icon: 'bi-trophy',
-      title: 'Toutes les équipes',
-      description: 'Accédez aux 30 équipes NBA avec leurs joueurs et informations complètes.'
-    },
-    {
-      icon: 'bi-lightning',
-      title: 'Temps réel',
-      description: 'Des données à jour grâce à l\'API balldontlie.io.'
+      icon: 'bi-grid-3x3',
+      title: 'Pagination optimisée',
+      description: 'Navigation fluide avec 12 joueurs par page pour une expérience optimale.'
     }
   ];
 }

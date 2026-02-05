@@ -18,26 +18,66 @@
                 <label class="form-label">
                   <i class="bi bi-search me-2"></i>Recherche
                 </label>
-                <div class="input-group input-group-lg search-input-wrapper">
-                  <span class="input-group-text bg-transparent border-0">
-                    <i class="bi bi-search"></i>
-                  </span>
-                  <input
-                    type="text"
-                    class="form-control"
-                    [formControl]="searchControl"
-                    placeholder="Rechercher par nom, équipe, position..."
-                    aria-label="Rechercher un joueur"
-                  />
-                  @if (searchControl.value) {
-                    <button
-                      class="btn btn-outline-secondary"
-                      type="button"
-                      (click)="clearSearch()"
-                      title="Effacer"
-                    >
-                      <i class="bi bi-x-lg"></i>
-                    </button>
+                <div class="search-wrapper position-relative">
+                  <div class="input-group input-group-lg search-input-wrapper">
+                    <span class="input-group-text bg-transparent border-0">
+                      <i class="bi bi-search"></i>
+                    </span>
+                    <input
+                      type="text"
+                      class="form-control"
+                      [formControl]="searchControl"
+                      placeholder="Rechercher par nom, équipe, position..."
+                      aria-label="Rechercher un joueur"
+                      (focus)="onSearchFocus($event)"
+                      (blur)="onSearchBlur()"
+                      (keydown)="onSearchKeydown($event)"
+                    />
+                    @if (searchControl.value) {
+                      <button
+                        class="btn btn-outline-secondary"
+                        type="button"
+                        (click)="clearSearch()"
+                        title="Effacer"
+                      >
+                        <i class="bi bi-x-lg"></i>
+                      </button>
+                    }
+                  </div>
+
+                  <!-- Dropdown historique -->
+                  @if (showHistory && searchHistoryService.getHistory().length > 0) {
+                    <div class="search-history-dropdown">
+                      <div class="dropdown-header d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                          <i class="bi bi-clock-history me-1"></i>
+                          Recherches récentes
+                        </small>
+                        <button 
+                          class="btn btn-link btn-sm p-0 text-danger"
+                          (click)="searchHistoryService.clearHistory(); $event.stopPropagation()"
+                          title="Effacer l'historique"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                      @for (term of searchHistoryService.getHistory(); track term) {
+                        <div 
+                          class="history-item"
+                          (click)="selectFromHistory(term)"
+                        >
+                          <i class="bi bi-clock-history me-2"></i>
+                          {{ term }}
+                          <button 
+                            class="btn btn-sm btn-link p-0 text-secondary ms-auto"
+                            (click)="removeFromHistory(term, $event)"
+                            title="Retirer"
+                          >
+                            <i class="bi bi-x"></i>
+                          </button>
+                        </div>
+                      }
+                    </div>
                   }
                 </div>
               </div>
@@ -76,7 +116,13 @@
   </div>
 
   @if (loading) {
-    <app-loader></app-loader>
+    <div class="row g-4 mb-5">
+      @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
+        <div class="col-12 col-md-6 col-lg-4">
+          <app-skeleton-card />
+        </div>
+      }
+    </div>
   }
 
   @if (error) {
@@ -88,30 +134,88 @@
     </div>
   }
 
-  @if (!loading && !error && players.length > 0) {
-    <div class="row mb-4">
+  <!-- Section stats et filtres -->
+  <div class="row mb-4">
       <div class="col-12">
-        <div class="alert alert-info border-0">
-          <i class="bi bi-info-circle-fill me-2"></i>
-          <strong>{{ players.length }}</strong> joueur(s) affiché(s)
-          <span class="badge bg-primary ms-3">Page {{ currentPage }} / {{ totalPages }}</span>
+        <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            @if (!loading && !error && players.length > 0) {
+              <div class="stats-badge">
+                <i class="bi bi-people-fill me-2"></i>
+                <strong>{{ players.length }}</strong> <span class="ms-2">{{ players.length > 1 ? 'joueurs' : 'joueur' }}</span>
+              </div>
+              
+              @if (selectedPlayers.size > 0) {
+                <div class="stats-badge stats-badge-success">
+                  <i class="bi bi-check-circle-fill me-2"></i>
+                  <strong>{{ selectedPlayers.size }}</strong> <span class="ms-2">{{ selectedPlayers.size > 1 ? 'sélectionnés' : 'sélectionné' }}</span>
+                </div>
+              }
+            }
+          </div>
+          
+          <div class="d-flex align-items-center gap-3">
+            <!-- Bouton favoris toujours visible -->
+            <button 
+              class="btn favorites-filter-btn"
+              [class.active]="showOnlyFavorites"
+              (click)="toggleFavoritesFilter()"
+            >
+              @if (showOnlyFavorites) {
+                <i class="bi bi-arrow-left"></i>
+                <span class="btn-text">Afficher tous</span>
+              } @else {
+                <i class="bi bi-heart"></i>
+                <span class="btn-text">Mes favoris</span>
+                @if (favoritesService.getCount() > 0) {
+                  <span class="count-badge">{{ favoritesService.getCount() }}</span>
+                }
+              }
+            </button>
+            
+            @if (selectedPlayers.size >= 2) {
+              <button 
+                class="btn btn-primary"
+                (click)="compareSelected()"
+              >
+                <i class="bi bi-graph-up-arrow me-2"></i>
+                Comparer les joueurs
+              </button>
+            }
+          </div>
         </div>
       </div>
     </div>
 
+  @if (!loading && !error && players.length > 0) {
+
     <div class="row g-4 mb-5 fade-in">
       @for (player of players; track player.idPlayer) {
         <div class="col-12 col-md-6 col-lg-4">
-          <div class="card h-100 hover-card shadow-custom border-0">
+          <div class="card h-100 hover-card shadow-custom border-0 position-relative" 
+               [class.selected-card]="isPlayerSelected(player.idPlayer)">
 
             <div class="card-header text-white position-relative" style="overflow: hidden;">
               <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10">
                 <i class="bi bi-basketball position-absolute" style="font-size: 8rem; right: -2rem; top: -2rem;"></i>
               </div>
-              <h5 class="card-title mb-0 position-relative">
-                <i class="bi bi-person-badge me-2"></i>
-                {{ player.strPlayer }}
-              </h5>
+              <div class="d-flex justify-content-between align-items-center position-relative">
+                <h5 class="card-title mb-0">
+                  <i class="bi bi-person-badge me-2"></i>
+                  {{ player.strPlayer }}
+                </h5>
+                <button 
+                  class="btn btn-sm btn-link text-white favorite-btn p-0"
+                  (click)="onToggleFavorite(player)"
+                  [attr.aria-label]="favoritesService.isFavorite(player.idPlayer) ? 'Retirer des favoris' : 'Ajouter aux favoris'"
+                  title="{{ favoritesService.isFavorite(player.idPlayer) ? 'Retirer des favoris' : 'Ajouter aux favoris' }}"
+                >
+                  <i class="bi" 
+                     [class.bi-heart-fill]="favoritesService.isFavorite(player.idPlayer)"
+                     [class.bi-heart]="!favoritesService.isFavorite(player.idPlayer)"
+                     style="font-size: 1.5rem;"></i>
+                </button>
+              </div>
             </div>
             
             <div class="card-body">
@@ -139,52 +243,59 @@
             </div>
             
             <div class="card-footer bg-transparent border-0 p-3">
-              <a
-                [routerLink]="['/players', player.idPlayer]"
-                class="btn btn-primary w-100"
-              >
-                <i class="bi bi-eye-fill me-2"></i> Voir le profil
-              </a>
+              <div class="d-flex gap-2 align-items-center">
+                <!-- Checkbox de comparaison -->
+                <div class="form-check m-0">
+                  <input 
+                    class="form-check-input compare-checkbox"
+                    type="checkbox"
+                    [id]="'player-' + player.idPlayer"
+                    [checked]="isPlayerSelected(player.idPlayer)"
+                    [disabled]="!canSelectMore() && !isPlayerSelected(player.idPlayer)"
+                    (change)="togglePlayerSelection(player)"
+                  />
+                  <label class="form-check-label text-secondary small" [for]="'player-' + player.idPlayer">
+                    Comparer
+                  </label>
+                </div>
+                
+                <!-- Bouton voir profil -->
+                <a
+                  [routerLink]="['/players', player.idPlayer]"
+                  class="btn btn-primary flex-grow-1"
+                  (click)="onViewProfile()"
+                >
+                  <i class="bi bi-eye-fill me-2"></i> Voir le profil
+                </a>
+              </div>
             </div>
           </div>
         </div>
       }
     </div>
 
-    <nav aria-label="Navigation des pages">
-      <ul class="pagination pagination-lg justify-content-center">
-        <li class="page-item" [class.disabled]="currentPage === 1">
-          <button
-            class="page-link"
-            (click)="previousPage()"
-            [disabled]="currentPage === 1"
-          >
-            <i class="bi bi-chevron-left"></i> Précédent
-          </button>
-        </li>
-
-        @for (pageNum of getPageNumbers(); track pageNum) {
-          <li class="page-item" [class.active]="pageNum === currentPage">
-            <button
-              class="page-link"
-              (click)="goToPage(pageNum)"
-            >
-              {{ pageNum }}
-            </button>
-          </li>
-        }
-
-        <li class="page-item" [class.disabled]="currentPage === totalPages">
-          <button
-            class="page-link"
-            (click)="nextPage()"
-            [disabled]="currentPage === totalPages"
-          >
-            Suivant <i class="bi bi-chevron-right"></i>
-          </button>
-        </li>
-      </ul>
-    </nav>
+    <!-- Infinite scroll trigger -->
+    <div #scrollTrigger class="text-center py-5">
+      @if (isLoadingMore) {
+        <div class="loading-more-container">
+          <div class="spinner-container">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+          <p class="text-secondary mt-3 mb-0">
+            <i class="bi bi-hourglass-split me-2"></i>
+            Chargement de plus de joueurs...
+          </p>
+        </div>
+      }
+      @if (currentPage >= totalPages && !isLoadingMore && players.length > 0) {
+        <div class="end-message">
+          <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
+          <p class="text-secondary mt-2 mb-0">Tous les joueurs ont été chargés</p>
+        </div>
+      }
+    </div>
   }
 
   @if (!loading && !error && players.length === 0) {

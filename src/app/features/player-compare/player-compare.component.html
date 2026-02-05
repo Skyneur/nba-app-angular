@@ -1,0 +1,194 @@
+<div class="container py-5">
+  <div class="row mb-5">
+    <div class="col-12 text-center">
+      <h1 class="display-3 fw-bold mb-3">
+        <i class="bi bi-graph-up-arrow text-primary me-3"></i>
+        <span class="text-gradient">Comparateur de joueurs</span>
+      </h1>
+      <p class="lead text-secondary">Comparez jusqu'à 3 joueurs NBA côte à côte</p>
+    </div>
+  </div>
+
+  @if (selectedPlayers.length === 0) {
+    <div class="row">
+      <div class="col-12">
+        <div class="alert alert-info text-center py-5">
+          <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
+          <h4>Aucun joueur sélectionné</h4>
+          <p class="mb-4">Retournez à la liste des joueurs et sélectionnez jusqu'à 3 joueurs à comparer</p>
+          <a routerLink="/players" class="btn btn-primary">
+            <i class="bi bi-arrow-left me-2"></i>
+            Retour à la liste
+          </a>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (selectedPlayers.length === 1) {
+    <div class="row">
+      <div class="col-12">
+        <div class="alert alert-warning text-center py-4">
+          <i class="bi bi-exclamation-triangle fs-2 d-block mb-3"></i>
+          <h5>Un seul joueur sélectionné</h5>
+          <p class="mb-3">Sélectionnez au moins 2 joueurs pour effectuer une comparaison</p>
+          <a routerLink="/players" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>
+            Sélectionner d'autres joueurs
+          </a>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (canCompare()) {
+    <!-- En-têtes des joueurs -->
+    <div class="row mb-4 g-4">
+      @for (player of selectedPlayers; track player.idPlayer; let i = $index) {
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 shadow-custom border-0">
+            <div class="card-header text-white position-relative">
+              <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                  <i class="bi bi-person-badge me-2"></i>
+                  {{ player.strPlayer }}
+                </h5>
+                <button 
+                  class="btn btn-sm btn-link text-white p-0"
+                  (click)="removePlayer(i)"
+                  title="Retirer"
+                >
+                  <i class="bi bi-x-circle" style="font-size: 1.5rem;"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body text-center">
+              @if (player.strThumb) {
+                <img 
+                  [src]="player.strThumb" 
+                  [alt]="player.strPlayer"
+                  class="img-fluid mb-3 rounded-circle"
+                  style="max-width: 150px; border: 3px solid var(--primary-color);"
+                />
+              }
+              <div class="badge" style="background: var(--gradient-primary); font-size: 1rem;">
+                {{ player.strTeam }}
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Tableau de comparaison -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow-custom border-0">
+          <div class="card-header">
+            <h4 class="mb-0">
+              <i class="bi bi-table me-2"></i>
+              Comparaison détaillée
+            </h4>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0 compare-table">
+                <thead>
+                  <tr>
+                    <th scope="col" class="fw-bold">Statistique</th>
+                    @for (player of selectedPlayers; track player.idPlayer) {
+                      <th scope="col" class="text-center">{{ player.strPlayer }}</th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Position -->
+                  <tr>
+                    <td class="fw-bold">
+                      <i class="bi bi-trophy-fill text-primary me-2"></i>
+                      Position
+                    </td>
+                    @for (player of selectedPlayers; track player.idPlayer) {
+                      <td class="text-center">
+                        <span class="badge bg-secondary">{{ player.strPosition || 'N/A' }}</span>
+                      </td>
+                    }
+                  </tr>
+
+                  <!-- Taille -->
+                  <tr>
+                    <td class="fw-bold">
+                      <i class="bi bi-arrows-vertical text-primary me-2"></i>
+                      Taille
+                    </td>
+                    @for (player of selectedPlayers; track player.idPlayer) {
+                      <td class="text-center">{{ player.strHeight || 'N/A' }}</td>
+                    }
+                  </tr>
+
+                  <!-- Poids -->
+                  <tr>
+                    <td class="fw-bold">
+                      <i class="bi bi-speedometer2 text-primary me-2"></i>
+                      Poids
+                    </td>
+                    @for (player of selectedPlayers; track player.idPlayer) {
+                      <td class="text-center">{{ player.strWeight || 'N/A' }}</td>
+                    }
+                  </tr>
+
+                  <!-- Nationalité -->
+                  <tr>
+                    <td class="fw-bold">
+                      <i class="bi bi-globe-americas text-primary me-2"></i>
+                      Nationalité
+                    </td>
+                    @for (player of selectedPlayers; track player.idPlayer) {
+                      <td class="text-center">{{ player.strNationality || 'USA' }}</td>
+                    }
+                  </tr>
+
+                  <!-- Date de naissance -->
+                  <tr>
+                    <td class="fw-bold">
+                      <i class="bi bi-calendar-event text-primary me-2"></i>
+                      Date de naissance
+                    </td>
+                    @for (player of selectedPlayers; track player.idPlayer) {
+                      <td class="text-center">
+                        {{ player.dateBorn ? (player.dateBorn | date: 'dd/MM/yyyy') : 'N/A' }}
+                      </td>
+                    }
+                  </tr>
+
+                  <!-- Équipe -->
+                  <tr>
+                    <td class="fw-bold">
+                      <i class="bi bi-shield-fill text-primary me-2"></i>
+                      Équipe
+                    </td>
+                    @for (player of selectedPlayers; track player.idPlayer) {
+                      <td class="text-center">
+                        <strong>{{ player.strTeam }}</strong>
+                      </td>
+                    }
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="row mt-4">
+      <div class="col-12 text-center">
+        <a routerLink="/players" class="btn btn-outline-primary btn-lg">
+          <i class="bi bi-arrow-left me-2"></i>
+          Retour à la liste
+        </a>
+      </div>
+    </div>
+  }
+</div>

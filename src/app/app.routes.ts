@@ -19,6 +19,11 @@ export const routes: Routes = [
     title: 'NBA App - Détail Joueur'
   },
   {
+    path: 'compare',
+    loadComponent: () => import('./features/player-compare/player-compare.component').then(m => m.PlayerCompareComponent),
+    title: 'NBA App - Comparateur'
+  },
+  {
     path: '404',
     loadComponent: () => import('./features/not-found/not-found.component').then(m => m.NotFoundComponent),
     title: 'NBA App - Page non trouvée'

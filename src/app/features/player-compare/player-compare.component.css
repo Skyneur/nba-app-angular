@@ -1,0 +1,45 @@
+/* 📊 Tableau de comparaison */
+.compare-table {
+  --bs-table-bg: var(--card-bg);
+  --bs-table-striped-bg: rgba(224, 34, 16, 0.03);
+  --bs-table-hover-bg: rgba(224, 34, 16, 0.05);
+  --bs-table-color: var(--text-primary);
+}
+
+.compare-table thead th {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  padding: 1rem;
+  font-weight: 600;
+}
+
+.compare-table tbody tr {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.compare-table tbody td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.compare-table tbody tr:hover {
+  background: var(--bs-table-hover-bg);
+}
+
+/* 🎴 Cartes joueurs */
+.card-header {
+  background: var(--gradient-primary);
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  .compare-table {
+    font-size: 0.85rem;
+  }
+  
+  .compare-table thead th,
+  .compare-table tbody td {
+    padding: 0.5rem;
+  }
+}
