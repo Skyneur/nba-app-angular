@@ -1,0 +1,72 @@
+.navbar {
+  position: relative;
+}
+
+.scroll-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 0%;
+  background: linear-gradient(90deg, #0F0F0F 0%, #1F1F1F 20%, #B01C0D 60%, #E02210 100%);
+  z-index: 10;
+  transition: width 0.1s ease-out;
+  box-shadow: 0 2px 8px rgba(224, 34, 16, 0.5);
+}
+
+/* Navigation */
+.navbar {
+  background: var(--card-bg) !important;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
+}
+
+.navbar-brand i {
+  margin-right: 0.5rem;
+  font-size: 1.8rem;
+}
+
+.nav-link {
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin: 0 0.5rem;
+}
+
+.nav-link:hover {
+  transform: translateY(-2px);
+}
+
+.nav-link.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 0.25rem;
+}
+
+/* Contenu principal */
+main {
+  min-height: calc(100vh - 56px);
+}
+
+/* Animations globales */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+* {
+  animation: fadeIn 0.3s ease-in;
+}

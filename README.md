@@ -1,27 +1,71 @@
-# NbaApp
+# 🏀 NBA Explorer - Application Angular 18
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.21.
+Application Front-End robuste développée avec Angular 18, consommant l'API **balldontlie.io** pour afficher les données NBA (joueurs, équipes, statistiques).
 
-## Development server
+## 📋 Caractéristiques Techniques
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+### Framework & Architecture
+- ✅ **Angular 18** avec Standalone Components
+- ✅ Nouvelle syntaxe de contrôle de flux (`@if`, `@for`)
+- ✅ Architecture modulaire (Core, Shared, Features)
+- ✅ Lazy Loading des routes pour optimiser les performances
 
-## Code scaffolding
+### Gestion Asynchrone (RxJS)
+- ✅ Service API centralisé avec gestion d'erreurs
+- ✅ Opérateurs RxJS : `map`, `catchError`, `tap`, `finalize`, `debounceTime`
+- ✅ BehaviorSubject pour l'état de chargement global
+- ✅ États gérés : Loading, Error, Data
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Routing & Navigation
+- ✅ Configuration des routes avec `app.routes.ts`
+- ✅ Guard fonctionnel pour valider les paramètres
+- ✅ Lazy loading des composants
+- ✅ Page 404 personnalisée
 
-## Build
+### Formulaires
+- ✅ Reactive Forms pour la recherche
+- ✅ Debounce (300ms) sur la recherche en temps réel
+- ✅ Validation et messages d'erreur
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### UI/UX
+- ✅ Bootstrap 5 + Bootstrap Icons
+- ✅ Design responsive (mobile-first)
+- ✅ Animations CSS personnalisées
+- ✅ Composants réutilisables (Loader, ErrorMessage)
 
-## Running unit tests
+## 🚀 Lancement
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```bash
+npm install
+npm start
+```
 
-## Running end-to-end tests
+Application : **http://localhost:4200/**
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## 🎯 Fonctionnalités
 
-## Further help
+1. **Page d'accueil** (`/`) - Présentation
+2. **Liste des joueurs** (`/players`) - Recherche en temps réel + Pagination
+3. **Détail joueur** (`/players/:id`) - Informations complètes
+4. **Page 404** - Routes invalides
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## 📦 Structure
+
+```
+src/app/
+├── core/          # Services, Guards
+├── shared/        # Composants réutilisables
+├── features/      # Pages (home, player-list, player-detail, not-found)
+├── models/        # Interfaces TypeScript
+└── app.routes.ts  # Configuration routing
+```
+
+## 🔑 Points Clés Clean Code
+
+- Typage TypeScript fort
+- Gestion d'erreurs centralisée
+- Reactive Forms avec debounce
+- Guard fonctionnel
+- Unsubscribe automatique (takeUntil)
+
+Projet d'éducation 2026

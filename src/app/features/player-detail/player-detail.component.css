@@ -1,0 +1,50 @@
+/* 🎨 Gradient pour l'en-tête */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #252525 0%, #1F1F1F 100%);
+}
+
+/* 🎴 Animation de la carte */
+.card {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📊 Sections d'informations */
+.bg-light {
+  transition: all 0.3s ease;
+}
+
+.bg-light:hover {
+  background-color: #e9ecef !important;
+  transform: scale(1.02);
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem !important;
+  }
+}

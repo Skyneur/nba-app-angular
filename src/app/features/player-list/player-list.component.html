@@ -1,0 +1,172 @@
+<div class="container py-5">
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="text-center mb-5">
+        <h1 class="display-3 fw-bold mb-3">
+          <span class="text-gradient">🏀 Joueurs NBA</span>
+        </h1>
+        <p class="lead text-secondary">Découvrez les stars de la NBA</p>
+      </div>
+      
+      <div class="card shadow-custom border-0">
+        <div class="card-body p-4">
+          <form>
+            <div class="input-group input-group-lg">
+              <span class="input-group-text">
+                <i class="bi bi-search"></i>
+              </span>
+              <input
+                type="text"
+                class="form-control"
+                [formControl]="searchControl"
+                placeholder="🔎 Rechercher par nom, prénom ou équipe..."
+                aria-label="Rechercher un joueur"
+              />
+              @if (searchControl.value) {
+                <button
+                  class="btn btn-outline-primary"
+                  type="button"
+                  (click)="clearSearch()"
+                  title="Effacer la recherche"
+                >
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              }
+            </div>
+            <small class="form-text text-muted mt-3 d-block">
+              <i class="bi bi-lightning-fill text-warning"></i>
+              Recherche instantanée activée
+            </small>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (loading) {
+    <app-loader></app-loader>
+  }
+
+  @if (error) {
+    <app-error-message [message]="error"></app-error-message>
+    <div class="text-center">
+      <button class="btn btn-primary" (click)="loadPlayers()">
+        <i class="bi bi-arrow-clockwise"></i> Réessayer
+      </button>
+    </div>
+  }
+
+  @if (!loading && !error && players.length > 0) {
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="alert alert-info border-0">
+          <i class="bi bi-info-circle-fill me-2"></i>
+          <strong>{{ players.length }}</strong> joueur(s) affiché(s)
+          <span class="badge bg-primary ms-3">Page {{ currentPage }} / {{ totalPages }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-5 fade-in">
+      @for (player of players; track player.idPlayer) {
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 hover-card shadow-custom border-0">
+
+            <div class="card-header text-white position-relative" style="overflow: hidden;">
+              <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10">
+                <i class="bi bi-basketball position-absolute" style="font-size: 8rem; right: -2rem; top: -2rem;"></i>
+              </div>
+              <h5 class="card-title mb-0 position-relative">
+                <i class="bi bi-person-badge me-2"></i>
+                {{ player.strPlayer }}
+              </h5>
+            </div>
+            
+            <div class="card-body">
+              <div class="mb-3">
+                <div class="d-flex align-items-center mb-2">
+                  <i class="bi bi-trophy-fill text-primary me-2"></i>
+                  <strong class="me-2">Position:</strong> 
+                  <span class="badge" style="background: var(--gradient-primary);">
+                    {{ player.strPosition || 'N/A' }}
+                  </span>
+                </div>
+                
+                <div class="d-flex align-items-center mb-2">
+                  <i class="bi bi-shield-fill text-primary me-2"></i>
+                  <strong class="me-2">Équipe:</strong>
+                  <span class="text-secondary">{{ player.strTeam }}</span>
+                </div>
+                
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-globe-americas text-primary me-2"></i>
+                  <strong class="me-2">Nationalité:</strong>
+                  <span class="text-secondary">{{ player.strNationality || 'USA' }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-footer bg-transparent border-0 p-3">
+              <a
+                [routerLink]="['/players', player.idPlayer]"
+                class="btn btn-primary w-100"
+              >
+                <i class="bi bi-eye-fill me-2"></i> Voir le profil
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <nav aria-label="Navigation des pages">
+      <ul class="pagination pagination-lg justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button
+            class="page-link"
+            (click)="previousPage()"
+            [disabled]="currentPage === 1"
+          >
+            <i class="bi bi-chevron-left"></i> Précédent
+          </button>
+        </li>
+
+        @for (pageNum of getPageNumbers(); track pageNum) {
+          <li class="page-item" [class.active]="pageNum === currentPage">
+            <button
+              class="page-link"
+              (click)="goToPage(pageNum)"
+            >
+              {{ pageNum }}
+            </button>
+          </li>
+        }
+
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <button
+            class="page-link"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+          >
+            Suivant <i class="bi bi-chevron-right"></i>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  }
+
+  @if (!loading && !error && players.length === 0) {
+    <div class="alert alert-info text-center" role="alert">
+      <i class="bi bi-search fs-1 d-block mb-3"></i>
+      <h4>Aucun joueur trouvé</h4>
+      <p class="mb-0">
+        @if (searchControl.value) {
+          Essayez une autre recherche ou
+          <button class="btn btn-link p-0" (click)="clearSearch()">effacez le filtre</button>
+        } @else {
+          Aucune donnée disponible pour le moment.
+        }
+      </p>
+    </div>
+  }
+</div>

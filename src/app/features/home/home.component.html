@@ -1,0 +1,101 @@
+<div class="container">
+  <div class="row min-vh-100 align-items-center">
+    <div class="col-12 text-center">
+      <div class="hero-icon mb-5">
+        <div class="position-relative d-inline-block">
+          <i class="bi bi-basketball gradient-animated" style="font-size: 10rem; background-size: 400% 400%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>
+          <div class="position-absolute top-50 start-50 translate-middle" style="width: 12rem; height: 12rem; background: var(--gradient-primary); opacity: 0.1; border-radius: 50%; filter: blur(40px);"></div>
+        </div>
+      </div>
+
+      <h1 class="display-1 fw-bold mb-4 animate-fade-in">
+        NBA <span class="text-gradient">Explorer</span>
+      </h1>
+      
+      <p class="lead text-secondary mb-5 fs-3 fw-light">
+        Explorez l'univers de la NBA : joueurs, équipes et statistiques
+      </p>
+
+      <div class="d-flex gap-4 justify-content-center mb-5 flex-wrap">
+        <a routerLink="/players" class="btn btn-primary btn-lg shadow-custom">
+          <i class="bi bi-people-fill me-2"></i>
+          Explorer les joueurs
+        </a>
+        <a href="#features" class="btn btn-outline-primary btn-lg">
+          <i class="bi bi-stars me-2"></i>
+          Découvrir les fonctionnalités
+        </a>
+      </div>
+
+      <div class="alert alert-info border-0 d-inline-block shadow-sm" role="alert">
+        <i class="bi bi-database-fill-check me-2"></i>
+        Propulsé par <strong>TheSportsDB API</strong> 🚀
+      </div>
+    </div>
+  </div>
+
+  <div id="features" class="row py-5 mb-5">
+    <div class="col-12 text-center mb-5">
+      <h2 class="display-4 fw-bold mb-3">
+        <span class="text-gradient">Fonctionnalités</span>
+      </h2>
+      <p class="lead text-secondary">Tout ce dont vous avez besoin pour explorer la NBA</p>
+    </div>
+
+    @for (feature of features; track feature.title) {
+      <div class="col-12 col-md-6 col-lg-3 mb-4 fade-in">
+        <div class="card h-100 border-0 text-center feature-card shadow-custom">
+          <div class="card-body p-4">
+            <div class="feature-icon mb-4">
+              <i class="bi {{ feature.icon }}"></i>
+            </div>
+            <h5 class="card-title fw-bold mb-3">{{ feature.title }}</h5>
+            <p class="card-text text-secondary">{{ feature.description }}</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- 🚀 Call to Action -->
+  <div class="row py-5 mb-5">
+    <div class="col-12">
+      <div class="card border-0 shadow-custom position-relative overflow-hidden" style="background: var(--gradient-primary);">
+        <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10">
+          <i class="bi bi-basketball position-absolute" style="font-size: 20rem; right: -5rem; bottom: -5rem;"></i>
+          <i class="bi bi-trophy position-absolute" style="font-size: 15rem; left: -3rem; top: -3rem;"></i>
+        </div>
+        
+        <div class="card-body text-center p-5 position-relative">
+          <h3 class="display-5 fw-bold mb-4 text-white">Prêt à explorer ?</h3>
+          <p class="lead mb-5 text-white fs-4 fw-light">
+            Découvrez des milliers de joueurs NBA et leurs statistiques détaillées
+          </p>
+          <a routerLink="/players" class="btn btn-light btn-lg px-5 shadow-custom">
+            <i class="bi bi-rocket-takeoff-fill me-2"></i>
+            Commencer l'exploration
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="py-5 mt-5" style="background: var(--gradient-dark);">
+  <div class="container text-center text-white">
+    <div class="mb-4">
+      <i class="bi bi-basketball text-gradient" style="font-size: 3rem;"></i>
+    </div>
+    <p class="mb-3 fs-5">
+      <i class="bi bi-code-slash me-2"></i>
+      Développé avec <span style="color: var(--primary-color);">♥</span> en Angular 18
+    </p>
+    <small class="text-white-50">Projet d'examen - NBA Explorer © 2026</small>
+    <div class="mt-4">
+      <span class="badge bg-dark text-white me-2" style="border: 1px solid var(--border-color);">Angular 18</span>
+      <span class="badge bg-dark text-white me-2" style="border: 1px solid var(--border-color);">TypeScript</span>
+      <span class="badge bg-dark text-white me-2" style="border: 1px solid var(--border-color);">Bootstrap 5</span>
+      <span class="badge bg-dark text-white" style="border: 1px solid var(--border-color);">RxJS</span>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,164 @@
+<div class="container py-5">
+  <div class="mb-5">
+    <button class="btn btn-outline-primary shadow-sm" (click)="goBack()">
+      <i class="bi bi-arrow-left me-2"></i> Retour à la liste
+    </button>
+  </div>
+
+  @if (loading) {
+    <app-loader></app-loader>
+  }
+
+  @if (error) {
+    <app-error-message [message]="error"></app-error-message>
+    <div class="alert alert-warning text-center border-0 shadow-sm">
+      <i class="bi bi-hourglass-split me-2"></i>
+      Redirection vers la page d'accueil dans 2 secondes...
+    </div>
+  }
+
+  @if (!loading && !error && player) {
+    <div class="row fade-in">
+      <div class="col-12 col-lg-8 mb-4">
+        <div class="card shadow-custom border-0">
+          <div class="card-header text-white py-5 position-relative overflow-hidden" style="background: var(--gradient-primary);">
+            <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10">
+              <i class="bi bi-basketball position-absolute" style="font-size: 15rem; right: -3rem; top: -3rem;"></i>
+            </div>
+            
+            <div class="d-flex align-items-center justify-content-between position-relative">
+              <div>
+                <h1 class="mb-3 fw-bold">
+                  <i class="bi bi-star-fill me-3"></i>
+                  {{ player.strPlayer }}
+                </h1>
+                <div class="d-flex gap-2 flex-wrap">
+                  @if (player.strNumber) {
+                    <span class="badge bg-white text-dark px-3 py-2 fs-6">
+                      <i class="bi bi-hash"></i>{{ player.strNumber }}
+                    </span>
+                  }
+                  @if (player.strPosition) {
+                    <span class="badge bg-white text-dark px-3 py-2 fs-6">
+                      {{ player.strPosition }}
+                    </span>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body p-4">
+            <div class="mb-4 p-4 rounded-custom" style="background: var(--gradient-card); border: 1px solid var(--border-color);">
+              <h4 class="text-gradient mb-4 fw-bold">
+                <i class="bi bi-shield-fill me-2"></i> Équipe
+              </h4>
+              <div class="row g-3">
+                <div class="col-12">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-trophy-fill text-primary fs-4 me-3"></i>
+                    <div>
+                      <small class="text-secondary d-block">Équipe actuelle</small>
+                      <strong class="fs-5">{{ player.strTeam }}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            @if (player.strHeight || player.strWeight) {
+              <div class="mb-4 p-4 rounded-custom" style="background: var(--gradient-card); border: 1px solid var(--border-color);">
+                <h4 class="text-gradient mb-4 fw-bold">
+                  <i class="bi bi-person-fill me-2"></i> Informations physiques
+                </h4>
+                <div class="row g-4">
+                  @if (player.strHeight) {
+                    <div class="col-md-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-rulers text-primary fs-4 me-3"></i>
+                        <div>
+                          <small class="text-secondary d-block">Taille</small>
+                          <strong class="fs-5">{{ player.strHeight }}</strong>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  @if (player.strWeight) {
+                    <div class="col-md-6">
+                      <div class="d-flex align-items-center">
+                        <i class="bi bi-speedometer text-primary fs-4 me-3"></i>
+                        <div>
+                          <small class="text-secondary d-block">Poids</small>
+                          <strong class="fs-5">{{ player.strWeight }}</strong>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (player.strNationality) {
+              <div class="mb-4 p-4 rounded-custom" style="background: var(--gradient-card); border: 1px solid var(--border-color);">
+                <h4 class="text-gradient mb-4 fw-bold">
+                  <i class="bi bi-globe-americas me-2"></i> Origine
+                </h4>
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-flag-fill text-primary fs-4 me-3"></i>
+                  <div>
+                    <small class="text-secondary d-block">Nationalité</small>
+                    <strong class="fs-5">{{ player.strNationality }}</strong>
+                  </div>
+                </div>
+              </div>
+            }
+
+
+          </div>
+
+          <div class="card-footer bg-transparent border-0 p-4">
+            <button class="btn btn-primary shadow-sm" (click)="goBack()">
+              <i class="bi bi-arrow-left me-2"></i> Retour à la liste
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="card shadow-custom border-0 mb-3">
+          <div class="card-header" style="background: var(--gradient-card); border-bottom: 1px solid var(--border-color);">
+            <h5 class="mb-0">
+              <i class="bi bi-info-circle-fill me-2"></i> Résumé
+            </h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-unstyled">
+              <li class="mb-3">
+                <i class="bi bi-person-fill text-primary me-2"></i>
+                <strong>ID:</strong> {{ player.idPlayer }}
+              </li>
+              <li class="mb-3">
+                <i class="bi bi-shield-fill text-primary me-2"></i>
+                <strong>Équipe:</strong> {{ player.strTeam }}
+              </li>
+              <li class="mb-3">
+                <i class="bi bi-basketball-fill text-primary me-2"></i>
+                <strong>Sport:</strong> {{ player.strSport }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card shadow-custom border-0">
+          <div class="card-body text-center p-4">
+            <i class="bi bi-search fs-1 text-primary mb-3 d-block"></i>
+            <h6 class="mb-3">Chercher un autre joueur ?</h6>
+            <a routerLink="/players" class="btn btn-primary w-100">
+              <i class="bi bi-list me-2"></i> Voir tous les joueurs
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
