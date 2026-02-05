@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject, of } from 'rxjs';
-import { catchError, map, tap, finalize } from 'rxjs/operators';
+import { Observable, throwError, BehaviorSubject, of, forkJoin, EMPTY } from 'rxjs';
+import { catchError, map, tap, finalize, mergeMap, shareReplay, expand, scan, takeLast } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Player, Team, SportsDbResponse, ApiResponse } from '../../models';
 
@@ -12,189 +13,130 @@ export class NbaApiService {
   private readonly API_URL = environment.apiUrl;
   private loadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
-  private teamsCache: Team[] = [];
+  private allPlayersCache: Player[] = [];
+  private loadAllPlayersObservable$: Observable<Player[]> | null = null;
+  private isBrowser: boolean;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) platformId: object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
+
+  private loadAllPlayers(): Observable<Player[]> {
+    if (this.allPlayersCache.length > 0) {
+      console.log('📦 Cache:', this.allPlayersCache.length, 'joueurs');
+      return of(this.allPlayersCache);
+    }
+
+    if (this.loadAllPlayersObservable$) {
+      console.log('⏳ Chargement en cours...');
+      return this.loadAllPlayersObservable$;
+    }
+
+    console.log('🔄 Chargement depuis votre API...');
+    this.loadingSubject.next(true);
+
+    const observable$ = this.http.get<Player[]>(this.API_URL).pipe(
+      tap(players => {
+        this.allPlayersCache = players;
+        console.log('✅ Total joueurs NBA:', players.length);
+        this.loadAllPlayersObservable$ = null;
+      }),
+      catchError(err => {
+        console.error('❌ Erreur API:', err);
+        console.log('📁 Fallback vers données locales...');
+        // Fallback vers le fichier local si l'API ne répond pas
+        return this.http.get<Player[]>('/assets/data/nba-players.json');
+      }),
+      tap(players => {
+        if (!this.allPlayersCache.length) {
+          this.allPlayersCache = players;
+        }
+      }),
+      finalize(() => {
+        console.log('🏁 Terminé');
+        this.loadingSubject.next(false);
+      }),
+      shareReplay(1)
+    ) as Observable<Player[]>;
+
+    this.loadAllPlayersObservable$ = observable$;
+    return observable$;
+  }
 
   getPlayers(page: number = 1, search?: string, perPage: number = 25): Observable<ApiResponse<Player>> {
-    this.loadingSubject.next(true);
-    
-    if (search && search.trim()) {
-      const searchTerms = search.trim().toLowerCase().split(' ');
-      
-      return this.http.get<{ player: Player[] }>(`${this.API_URL}/searchplayers.php?p=${encodeURIComponent(search.trim())}`)
-        .pipe(
-          map(response => {
-            const players = response.player || [];
-            let nbaPlayers = players.filter(p => {
-              if (p.strSport !== 'Basketball') return false;
-              
-              const playerName = p.strPlayer.toLowerCase();
-              return searchTerms.some(term => playerName.includes(term));
-            });
-            
-            if (nbaPlayers.length === 0) {
-              const localPlayers = this.getLocalNBAPlayers();
-              nbaPlayers = localPlayers.filter(p => {
-                const playerName = p.strPlayer.toLowerCase();
-                return searchTerms.some(term => playerName.includes(term));
-              });
-            }
-            
-            const startIndex = (page - 1) * perPage;
-            const endIndex = startIndex + perPage;
-            const paginatedPlayers = nbaPlayers.slice(startIndex, endIndex);
-            
-            return {
-              data: paginatedPlayers,
-              meta: {
-                total_pages: Math.ceil(nbaPlayers.length / perPage),
-                current_page: page,
-                next_page: page < Math.ceil(nbaPlayers.length / perPage) ? page + 1 : null,
-                per_page: perPage,
-                total_count: nbaPlayers.length
-              }
-            };
-          }),
-          tap(response => console.log('✅ Joueurs trouvés:', response.data.length)),
-          catchError(this.handleError),
-          finalize(() => this.loadingSubject.next(false))
-        );
-    }
-    
-    return this.getAllNBAPlayers(page, perPage);
-  }
+    return this.loadAllPlayers().pipe(
+      map(allPlayers => {
+        let filteredPlayers = allPlayers;
 
-  private getLocalNBAPlayers(): Player[] {
-    const famousPlayers = [
-      'LeBron James', 'Stephen Curry', 'Kevin Durant', 'Giannis Antetokounmpo',
-      'Luka Doncic', 'Joel Embiid', 'Nikola Jokic', 'Damian Lillard',
-      'Kawhi Leonard', 'Anthony Davis', 'James Harden', 'Jayson Tatum',
-      'Devin Booker', 'Donovan Mitchell', 'Trae Young', 'Jimmy Butler',
-      'Paul George', 'Kyrie Irving', 'Bradley Beal', 'Zion Williamson',
-      'Ja Morant', 'Shai Gilgeous-Alexander', 'De\'Aaron Fox', 'Julius Randle'
-    ];
-
-    return famousPlayers.map((name, index) => ({
-      idPlayer: `${134060 + index}`,
-      strPlayer: name,
-      strTeam: 'NBA',
-      strSport: 'Basketball',
-      strPosition: ['Guard', 'Forward', 'Center'][index % 3],
-      strNationality: 'USA',
-      strHeight: `${(1.90 + Math.random() * 0.2).toFixed(2)}m`,
-      strWeight: `${90 + Math.floor(Math.random() * 20)}kg`,
-      strNumber: `${index + 1}`,
-      idTeam: '134860'
-    }));
-  }
-
-  private getAllNBAPlayers(page: number = 1, perPage: number = 25): Observable<ApiResponse<Player>> {
-    return this.getTeams().pipe(
-      map(teams => teams.slice(0, 5)),
-      map(teams => {
-        const allPlayers: Player[] = [];
-        const famousPlayers = [
-          'LeBron James', 'Stephen Curry', 'Kevin Durant', 'Giannis Antetokounmpo',
-          'Luka Doncic', 'Joel Embiid', 'Nikola Jokic', 'Damian Lillard',
-          'Kawhi Leonard', 'Anthony Davis', 'James Harden', 'Jayson Tatum',
-          'Devin Booker', 'Donovan Mitchell', 'Trae Young', 'Jimmy Butler',
-          'Paul George', 'Kyrie Irving', 'Bradley Beal', 'Zion Williamson'
-        ];
-
-        teams.forEach((team, index) => {
-          for (let i = 0; i < 4; i++) {
-            const playerIndex = index * 4 + i;
-            if (playerIndex < famousPlayers.length) {
-              allPlayers.push({
-                idPlayer: `${134060 + playerIndex}`,
-                strPlayer: famousPlayers[playerIndex],
-                strTeam: team.strTeam,
-                strSport: 'Basketball',
-                strPosition: ['Guard', 'Forward', 'Center'][i % 3],
-                strNationality: 'USA',
-                strHeight: `${(1.90 + Math.random() * 0.2).toFixed(2)}m`,
-                strWeight: `${90 + Math.floor(Math.random() * 20)}kg`,
-                strNumber: `${i + 1}`,
-                idTeam: team.idTeam
-              });
-            }
-          }
-        });
+        if (search && search.trim()) {
+          const searchLower = search.trim().toLowerCase();
+          filteredPlayers = allPlayers.filter(p =>
+            p.strPlayer.toLowerCase().includes(searchLower) ||
+            p.strTeam?.toLowerCase().includes(searchLower) ||
+            p.strPosition?.toLowerCase().includes(searchLower)
+          );
+        }
 
         const startIndex = (page - 1) * perPage;
         const endIndex = startIndex + perPage;
-        const paginatedPlayers = allPlayers.slice(startIndex, endIndex);
+        const paginatedPlayers = filteredPlayers.slice(startIndex, endIndex);
 
         return {
           data: paginatedPlayers,
           meta: {
-            total_pages: Math.ceil(allPlayers.length / perPage),
+            total_pages: Math.ceil(filteredPlayers.length / perPage),
             current_page: page,
-            next_page: page < Math.ceil(allPlayers.length / perPage) ? page + 1 : null,
+            next_page: page < Math.ceil(filteredPlayers.length / perPage) ? page + 1 : null,
             per_page: perPage,
-            total_count: allPlayers.length
+            total_count: filteredPlayers.length
           }
         };
-      }),
-      catchError(this.handleError),
-      finalize(() => this.loadingSubject.next(false))
+      })
     );
   }
 
   getPlayerById(id: string): Observable<Player> {
-    this.loadingSubject.next(true);
-    
-    const numericId = parseInt(id, 10);
-    if (numericId >= 134060 && numericId < 134084) {
-      const localPlayers = this.getLocalNBAPlayers();
-      const player = localPlayers.find(p => p.idPlayer === id);
-      
-      if (player) {
-        return of(player).pipe(
-          tap(p => console.log('✅ Détails joueur (local):', p.strPlayer)),
-          finalize(() => this.loadingSubject.next(false))
-        );
-      }
-    }
-    
-    return this.http.get<SportsDbResponse<Player>>(`${this.API_URL}/lookupplayer.php?id=${id}`)
-      .pipe(
-        map(response => {
-          const players = response.players || [];
-          if (players.length === 0) {
-            throw new Error('Joueur non trouvé');
-          }
-          return players[0];
-        }),
-        tap(player => console.log('✅ Détails joueur:', player.strPlayer)),
-        catchError(this.handleError),
-        finalize(() => this.loadingSubject.next(false))
-      );
+    return this.loadAllPlayers().pipe(
+      map(players => {
+        const player = players.find(p => p.idPlayer === id);
+        if (!player) {
+          throw new Error('Joueur non trouvé');
+        }
+        return player;
+      }),
+      catchError(err => {
+        console.error('❌ Joueur non trouvé:', id);
+        return throwError(() => err);
+      })
+    );
   }
 
   getTeams(): Observable<Team[]> {
-    if (this.teamsCache.length > 0) {
-      return of(this.teamsCache);
+    if (!this.isBrowser) {
+      return of([]);
     }
 
     this.loadingSubject.next(true);
-    
+
     return this.http.get<SportsDbResponse<Team>>(`${this.API_URL}/search_all_teams.php?l=NBA`)
       .pipe(
         map(response => response.teams || []),
-        tap(teams => {
-          this.teamsCache = teams;
-          console.log('✅ Équipes récupérées:', teams.length);
-        }),
+        tap(teams => console.log('✅ Équipes récupérées:', teams.length)),
         catchError(this.handleError),
         finalize(() => this.loadingSubject.next(false))
       );
   }
 
   getPlayersByTeam(teamId: string): Observable<Player[]> {
+    if (!this.isBrowser) {
+      return of([]);
+    }
+
     this.loadingSubject.next(true);
-    
+
     return this.http.get<SportsDbResponse<Player>>(`${this.API_URL}/lookup_all_players.php?id=${teamId}`)
       .pipe(
         map(response => response.player || []),
@@ -207,7 +149,7 @@ export class NbaApiService {
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'Une erreur est survenue';
 
-    if (error.error instanceof ErrorEvent) {
+    if (error.error instanceof Error) {
       errorMessage = `Erreur réseau: ${error.error.message}`;
       console.error('🔴 Erreur client:', error.error.message);
     } else {
@@ -232,7 +174,7 @@ export class NbaApiService {
         default:
           errorMessage = `Erreur ${error.status}: ${error.message}`;
       }
-      
+
       console.error(`🔴 Erreur serveur:`, `\n- Code: ${error.status}`, `\n- Message: ${error.message}`, `\n- URL: ${error.url}`);
     }
 

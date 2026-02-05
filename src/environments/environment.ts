@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://www.thesportsdb.com/api/v1/json/3',
+  apiUrl: 'https://tomgaillard.fr/api/nba-data/content.json',
   sport: 'Basketball',
   league: 'NBA'
 };

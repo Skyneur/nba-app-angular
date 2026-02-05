@@ -19,8 +19,6 @@
   }
 }
 
-@media (max-width: 768px) {
-
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -32,7 +30,6 @@
   }
 }
 
-/* 📊 Sections d'informations */
 .bg-light {
   transition: all 0.3s ease;
 }
@@ -42,9 +39,9 @@
   transform: scale(1.02);
 }
 
-/* 📱 Responsive */
 @media (max-width: 768px) {
   h1 {
     font-size: 1.5rem !important;
   }
 }
+
