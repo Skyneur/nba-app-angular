@@ -1,49 +1,70 @@
-# 🔑 Configuration de l'API Key
+# 🔑 Configuration de l'API
 
-## ⚠️ IMPORTANT : L'API nécessite une clé d'authentification
+## ⚙️ API Personnalisée
 
-L'API **balldontlie.io** nécessite maintenant une clé API gratuite pour fonctionner.
+L'application utilise une API personnalisée hébergée sur **tomgaillard.fr**.
 
-## 📝 Étapes pour obtenir votre clé API
+## 📝 Configuration actuelle
 
-### 1. Créer un compte gratuit
-Rendez-vous sur : **https://www.balldontlie.io/**
+### URL de l'API
+```
+https://tomgaillard.fr/api/nba-data/content.json
+```
 
-### 2. Récupérer votre clé API
-- Connectez-vous à votre compte
-- Allez dans la section "API Keys"
-- Copiez votre clé API
-
-### 3. Configurer votre application
-
-Ouvrez le fichier : `src/environments/environment.ts`
-
-Remplacez `'YOUR_API_KEY'` par votre clé personnelle :
+### Fichier de configuration
+`src/environments/environment.ts`
 
 ```typescript
 export const environment = {
   production: false,
-  apiUrl: 'https://api.balldontlie.io/v1',
-  apiKey: 'VOTRE_CLE_API_ICI'
+  apiUrl: 'https://tomgaillard.fr/api/nba-data/content.json',
+  sport: 'Basketball',
+  league: 'NBA'
 };
 ```
 
-### 4. Redémarrer le serveur
+## 📤 Upload du fichier JSON
 
-```bash
-npm start
+1. Uploadez le fichier `content.json` (à la racine du projet) sur votre serveur
+2. Placez-le à : `https://tomgaillard.fr/api/nba-data/content.json`
+3. Assurez-vous que les headers CORS sont configurés :
+   ```
+   Access-Control-Allow-Origin: *
+   Content-Type: application/json
+   ```
+
+## 🔄 Fallback local
+
+Si l'API distante est indisponible, l'application charge automatiquement les données depuis :
+```
+/assets/data/nba-players.json
 ```
 
 ## ✅ Vérification
 
-Une fois configuré, vous devriez voir les joueurs s'afficher sur http://localhost:4200/players
+Une fois le serveur configuré, rechargez : http://localhost:4200/players
 
-## 🔒 Sécurité
+## 📊 Format des données
 
-⚠️ **NE COMMITTEZ JAMAIS votre clé API dans Git !**
+Le fichier JSON doit contenir un tableau de joueurs :
+```json
+[
+  {
+    "idPlayer": "1",
+    "strPlayer": "LeBron James",
+    "strTeam": "Los Angeles Lakers",
+    "strSport": "Basketball",
+    "strPosition": "SF",
+    "strHeight": "6'9\"",
+    "strWeight": "250 lbs",
+    "strNationality": "USA",
+    "dateBorn": "1984-12-30",
+    "strThumb": "https://..."
+  }
+]
+```
 
-Le fichier `environment.ts` devrait être ajouté au `.gitignore` en production.
+## 🛠️ Fichiers générés
 
-## 📚 Documentation API
-
-Pour plus d'informations : https://docs.balldontlie.io/
+- `content.json` : 100 joueurs NBA à uploader sur le serveur
+- `src/assets/data/nba-players.json` : Fichier de fallback local

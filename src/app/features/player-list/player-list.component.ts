@@ -25,6 +25,7 @@ import { ErrorMessageComponent } from '../../shared/components/error-message.com
 })
 export class PlayerListComponent implements OnInit, OnDestroy {
   searchControl = new FormControl('', { nonNullable: true });
+  sortControl = new FormControl('name-asc', { nonNullable: true });
 
   players: Player[] = [];
   loading = false;
@@ -32,7 +33,16 @@ export class PlayerListComponent implements OnInit, OnDestroy {
   
   currentPage = 1;
   totalPages = 1;
-  perPage = 25;
+  perPage = 12;
+
+  sortOptions = [
+    { value: 'name-asc', label: 'Nom (A-Z)' },
+    { value: 'name-desc', label: 'Nom (Z-A)' },
+    { value: 'team-asc', label: 'Équipe (A-Z)' },
+    { value: 'team-desc', label: 'Équipe (Z-A)' },
+    { value: 'position-asc', label: 'Position (A-Z)' },
+    { value: 'nationality-asc', label: 'Nationalité (A-Z)' }
+  ];
 
   private destroy$ = new Subject<void>();
 
@@ -41,6 +51,7 @@ export class PlayerListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadPlayers();
     this.setupSearch();
+    this.setupSort();
   }
 
   ngOnDestroy(): void {
@@ -62,6 +73,46 @@ export class PlayerListComponent implements OnInit, OnDestroy {
       });
   }
 
+  private setupSort(): void {
+    this.sortControl.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.sortPlayers();
+      });
+  }
+
+  private sortPlayers(): void {
+    const sortValue = this.sortControl.value;
+    const [field, order] = sortValue.split('-');
+
+    this.players.sort((a, b) => {
+      let aValue: string = '';
+      let bValue: string = '';
+
+      switch (field) {
+        case 'name':
+          aValue = a.strPlayer || '';
+          bValue = b.strPlayer || '';
+          break;
+        case 'team':
+          aValue = a.strTeam || '';
+          bValue = b.strTeam || '';
+          break;
+        case 'position':
+          aValue = a.strPosition || '';
+          bValue = b.strPosition || '';
+          break;
+        case 'nationality':
+          aValue = a.strNationality || '';
+          bValue = b.strNationality || '';
+          break;
+      }
+
+      const comparison = aValue.localeCompare(bValue);
+      return order === 'asc' ? comparison : -comparison;
+    });
+  }
+
   loadPlayers(search?: string): void {
     this.loading = true;
     this.error = null;
@@ -72,6 +123,7 @@ export class PlayerListComponent implements OnInit, OnDestroy {
         next: (response: ApiResponse<Player>) => {
           this.players = response.data;
           this.totalPages = response.meta?.total_pages || 1;
+          this.sortPlayers();
           this.loading = false;
           console.log('✅ Joueurs chargés:', this.players.length);
         },

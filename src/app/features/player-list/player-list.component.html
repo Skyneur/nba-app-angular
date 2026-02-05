@@ -3,40 +3,72 @@
     <div class="col-12">
       <div class="text-center mb-5">
         <h1 class="display-3 fw-bold mb-3">
-          <span class="text-gradient">🏀 Joueurs NBA</span>
+          <i class="bi bi-basketball text-primary me-3"></i>
+          <span class="text-gradient">Joueurs NBA</span>
         </h1>
         <p class="lead text-secondary">Découvrez les stars de la NBA</p>
       </div>
       
-      <div class="card shadow-custom border-0">
+      <div class="card shadow-lg border-0 search-card">
         <div class="card-body p-4">
           <form>
-            <div class="input-group input-group-lg">
-              <span class="input-group-text">
-                <i class="bi bi-search"></i>
-              </span>
-              <input
-                type="text"
-                class="form-control"
-                [formControl]="searchControl"
-                placeholder="🔎 Rechercher par nom, prénom ou équipe..."
-                aria-label="Rechercher un joueur"
-              />
-              @if (searchControl.value) {
-                <button
-                  class="btn btn-outline-primary"
-                  type="button"
-                  (click)="clearSearch()"
-                  title="Effacer la recherche"
+            <div class="row g-3">
+              <!-- Barre de recherche -->
+              <div class="col-lg-8">
+                <label class="form-label">
+                  <i class="bi bi-search me-2"></i>Recherche
+                </label>
+                <div class="input-group input-group-lg search-input-wrapper">
+                  <span class="input-group-text bg-transparent border-0">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    [formControl]="searchControl"
+                    placeholder="Rechercher par nom, équipe, position..."
+                    aria-label="Rechercher un joueur"
+                  />
+                  @if (searchControl.value) {
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="button"
+                      (click)="clearSearch()"
+                      title="Effacer"
+                    >
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Système de tri -->
+              <div class="col-lg-4">
+                <label class="form-label">
+                  <i class="bi bi-sort-down me-2"></i>Trier par
+                </label>
+                <select
+                  class="form-select form-select-lg"
+                  [formControl]="sortControl"
+                  aria-label="Trier les joueurs"
                 >
-                  <i class="bi bi-x-lg"></i>
-                </button>
-              }
+                  @for (option of sortOptions; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+              </div>
             </div>
-            <small class="form-text text-muted mt-3 d-block">
-              <i class="bi bi-lightning-fill text-warning"></i>
-              Recherche instantanée activée
-            </small>
+
+            <div class="d-flex align-items-center mt-3 gap-3">
+              <small class="text-muted">
+                <i class="bi bi-lightning-fill text-warning me-1"></i>
+                Recherche instantanée
+              </small>
+              <small class="text-muted">
+                <i class="bi bi-funnel-fill text-info me-1"></i>
+                Tri automatique
+              </small>
+            </div>
           </form>
         </div>
       </div>
