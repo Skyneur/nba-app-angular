@@ -176,7 +176,6 @@ export class PlayerListComponent implements OnInit, OnDestroy, AfterViewInit {
     // Si on affiche les favoris, utiliser directement les favoris stockés
     if (this.showOnlyFavorites) {
       const favorites = this.favoritesService.getFavorites();
-      console.log('⭐ Affichage des favoris:', favorites.length);
       
       // Filtrer par recherche si nécessaire
       let filteredFavorites = favorites;
@@ -195,7 +194,6 @@ export class PlayerListComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sortPlayers();
       this.loading = false;
       this.isLoadingMore = false;
-      console.log('✅ Favoris chargés:', this.players.length);
       return;
     }
 

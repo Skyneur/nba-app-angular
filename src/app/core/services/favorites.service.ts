@@ -13,9 +13,7 @@ export class FavoritesService {
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     if (isPlatformBrowser(this.platformId)) {
-      const loaded = this.loadFromStorage();
-      console.log('🔍 Favoris chargés:', loaded, 'Count:', loaded.length);
-      this.favorites.set(loaded);
+      this.favorites.set(this.loadFromStorage());
     }
   }
 
@@ -25,42 +23,32 @@ export class FavoritesService {
     }
     try {
       const data = localStorage.getItem(this.STORAGE_KEY);
-      console.log('📦 localStorage raw data:', data);
-      
-      if (!data) {
-        console.log('✅ Pas de données dans localStorage');
-        return [];
-      }
+      if (!data) return [];
       
       const parsed = JSON.parse(data);
-      console.log('📋 Données parsées:', parsed);
       
       // Validation stricte : doit être un tableau non vide d'objets valides
       if (!Array.isArray(parsed) || parsed.length === 0) {
-        console.log('🧹 Nettoyage: tableau vide ou invalide');
         localStorage.removeItem(this.STORAGE_KEY);
         return [];
       }
       
       // Vérifier que chaque élément est un objet valide avec un idPlayer
       const validPlayers = parsed.filter(p => p && typeof p === 'object' && p.idPlayer);
-      console.log('✅ Joueurs valides:', validPlayers.length, '/', parsed.length);
       
       if (validPlayers.length === 0) {
-        console.log('🧹 Nettoyage: aucun joueur valide');
         localStorage.removeItem(this.STORAGE_KEY);
         return [];
       }
       
       // Si des entrées invalides ont été filtrées, mettre à jour le storage
       if (validPlayers.length !== parsed.length) {
-        console.log('🔧 Mise à jour du storage avec les joueurs valides');
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(validPlayers));
       }
       
       return validPlayers;
     } catch (error) {
-      console.error('❌ Erreur chargement favoris:', error);
+      console.error('Erreur chargement favoris:', error);
       localStorage.removeItem(this.STORAGE_KEY);
       return [];
     }
