@@ -3,15 +3,34 @@
     <div class="col-12 text-center">
       <div class="hero-icon mb-5">
         <div class="position-relative d-inline-block">
-          <i class="bi bi-basketball gradient-animated" style="font-size: 10rem; background-size: 400% 400%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>
-          <div class="position-absolute top-50 start-50 translate-middle" style="width: 12rem; height: 12rem; background: var(--gradient-primary); opacity: 0.1; border-radius: 50%; filter: blur(40px);"></div>
+          <i
+            class="bi bi-basketball gradient-animated"
+            style="
+              font-size: 10rem;
+              background-size: 400% 400%;
+              -webkit-background-clip: text;
+              background-clip: text;
+              -webkit-text-fill-color: transparent;
+            "
+          ></i>
+          <div
+            class="position-absolute top-50 start-50 translate-middle"
+            style="
+              width: 12rem;
+              height: 12rem;
+              background: var(--gradient-primary);
+              opacity: 0.1;
+              border-radius: 50%;
+              filter: blur(40px);
+            "
+          ></div>
         </div>
       </div>
 
       <h1 class="display-1 fw-bold mb-4 animate-fade-in">
         NBA <span class="text-gradient">Explorer</span>
       </h1>
-      
+
       <p class="lead text-secondary mb-5 fs-3 fw-light">
         Explorez l'univers de la NBA : joueurs, équipes et statistiques
       </p>
@@ -27,7 +46,10 @@
         </a>
       </div>
 
-      <div class="alert alert-info border-0 d-inline-block shadow-sm" role="alert">
+      <div
+        class="alert alert-info border-0 d-inline-block shadow-sm"
+        role="alert"
+      >
         <i class="bi bi-server me-2"></i>
         <strong>100 joueurs NBA</strong> disponibles
       </div>
@@ -39,7 +61,9 @@
       <h2 class="display-4 fw-bold mb-3">
         <span class="text-gradient">Fonctionnalités</span>
       </h2>
-      <p class="lead text-secondary">Tout ce dont vous avez besoin pour explorer la NBA</p>
+      <p class="lead text-secondary">
+        Tout ce dont vous avez besoin pour explorer la NBA
+      </p>
     </div>
 
     @for (feature of features; track feature.title) {
@@ -60,20 +84,32 @@
   <!-- 🚀 Call to Action -->
   <div class="row py-5 mb-5">
     <div class="col-12">
-      <div class="card border-0 shadow-custom position-relative overflow-hidden cta-card">
+      <div
+        class="card border-0 shadow-custom position-relative overflow-hidden cta-card"
+      >
         <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10">
-          <i class="bi bi-basketball position-absolute" style="font-size: 20rem; right: -5rem; bottom: -5rem;"></i>
-          <i class="bi bi-trophy position-absolute" style="font-size: 15rem; left: -3rem; top: -3rem;"></i>
+          <i
+            class="bi bi-basketball position-absolute"
+            style="font-size: 20rem; right: -5rem; bottom: -5rem"
+          ></i>
+          <i
+            class="bi bi-trophy position-absolute"
+            style="font-size: 15rem; left: -3rem; top: -3rem"
+          ></i>
         </div>
-        
+
         <div class="card-body text-center p-5 position-relative">
           <h3 class="display-5 fw-bold mb-4">
             Prêt à explorer <span class="text-gradient">?</span>
           </h3>
           <p class="lead mb-5 text-secondary fs-4">
-            Découvrez 100 joueurs NBA avec profils détaillés et système de tri avancé
+            Découvrez 100 joueurs NBA avec profils détaillés et système de tri
+            avancé
           </p>
-          <a routerLink="/players" class="btn btn-primary btn-lg px-5 shadow-custom">
+          <a
+            routerLink="/players"
+            class="btn btn-primary btn-lg px-5 shadow-custom"
+          >
             <i class="bi bi-rocket-takeoff-fill me-2"></i>
             Commencer l'exploration
           </a>
@@ -82,22 +118,3 @@
     </div>
   </div>
 </div>
-
-<footer class="py-5 mt-5" style="background: var(--gradient-dark);">
-  <div class="container text-center text-white">
-    <div class="mb-4">
-      <i class="bi bi-basketball text-gradient" style="font-size: 3rem;"></i>
-    </div>
-    <p class="mb-3 fs-5">
-      <i class="bi bi-code-slash me-2"></i>
-      Développé avec <i class="bi bi-heart-fill" style="color: var(--primary-color);"></i> en Angular 18
-    </p>
-    <small class="text-white-50">Projet d'examen - NBA Explorer © 2026</small>
-    <div class="mt-4">
-      <span class="badge bg-dark text-white me-2" style="border: 1px solid var(--border-color);">Angular 18</span>
-      <span class="badge bg-dark text-white me-2" style="border: 1px solid var(--border-color);">TypeScript</span>
-      <span class="badge bg-dark text-white me-2" style="border: 1px solid var(--border-color);">Bootstrap 5</span>
-      <span class="badge bg-dark text-white" style="border: 1px solid var(--border-color);">RxJS</span>
-    </div>
-  </div>
-</footer>

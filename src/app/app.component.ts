@@ -12,6 +12,15 @@ import { CommonModule } from '@angular/common';
 export class AppComponent {
   title = 'NBA Explorer';
   currentYear = new Date().getFullYear();
+  isMenuOpen = false;
+
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  closeMenu(): void {
+    this.isMenuOpen = false;
+  }
 
   @HostListener('window:scroll', [])
   onWindowScroll() {
