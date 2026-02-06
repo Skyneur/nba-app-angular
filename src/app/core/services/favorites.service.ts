@@ -8,7 +8,6 @@ import { Player } from '../../models/player.model';
 export class FavoritesService {
   private readonly STORAGE_KEY = 'nba_favorites';
   
-  // Signal pour la réactivité
   favorites = signal<Player[]>([]);
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
@@ -27,13 +26,11 @@ export class FavoritesService {
       
       const parsed = JSON.parse(data);
       
-      // Validation stricte : doit être un tableau non vide d'objets valides
       if (!Array.isArray(parsed) || parsed.length === 0) {
         localStorage.removeItem(this.STORAGE_KEY);
         return [];
       }
       
-      // Vérifier que chaque élément est un objet valide avec un idPlayer
       const validPlayers = parsed.filter(p => p && typeof p === 'object' && p.idPlayer);
       
       if (validPlayers.length === 0) {
@@ -41,7 +38,6 @@ export class FavoritesService {
         return [];
       }
       
-      // Si des entrées invalides ont été filtrées, mettre à jour le storage
       if (validPlayers.length !== parsed.length) {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(validPlayers));
       }
@@ -80,7 +76,6 @@ export class FavoritesService {
     const updated = current.filter(p => p.idPlayer !== id);
     this.favorites.set(updated);
     
-    // Si plus aucun favori, nettoyer le localStorage
     if (updated.length === 0) {
       if (isPlatformBrowser(this.platformId)) {
         localStorage.removeItem(this.STORAGE_KEY);

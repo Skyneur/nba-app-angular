@@ -1,39 +1,39 @@
 export interface Player {
   idPlayer: string;
-  strPlayer: string;           // Nom complet
-  strTeam: string;             // Nom de l'équipe
-  strSport: string;            // Sport (Basketball)
-  strNationality?: string;     // Nationalité
-  strPosition?: string;        // Position
-  strHeight?: string;          // Taille (ex: "2.06 m")
-  strWeight?: string;          // Poids (ex: "113 kg")
-  strThumb?: string;           // Photo du joueur
-  strCutout?: string;          // Image détourée
-  strBanner?: string;          // Bannière
-  strDescriptionEN?: string;   // Description
-  dateBorn?: string;           // Date de naissance
-  strBirthLocation?: string;   // Lieu de naissance
-  strNumber?: string;          // Numéro de maillot
-  strWage?: string;            // Salaire
-  strSigning?: string;         // Date de signature
-  strKit?: string;             // Image du kit
-  idTeam?: string;             // ID de l'équipe
+  strPlayer: string;
+  strTeam: string;
+  strSport: string;
+  strNationality?: string;
+  strPosition?: string;
+  strHeight?: string;
+  strWeight?: string;
+  strThumb?: string;
+  strCutout?: string;
+  strBanner?: string;
+  strDescriptionEN?: string;
+  dateBorn?: string;
+  strBirthLocation?: string;
+  strNumber?: string;
+  strWage?: string;
+  strSigning?: string;
+  strKit?: string;
+  idTeam?: string;
 }
 
 export interface Team {
   idTeam: string;
-  strTeam: string;             // Nom de l'équipe
-  strTeamShort?: string;       // Nom court
-  strAlternate?: string;       // Nom alternatif
-  strSport: string;            // Sport
-  strLeague: string;           // Ligue (NBA)
-  strDivision?: string;        // Division
-  strStadium?: string;         // Stade
-  strLocation?: string;        // Ville
-  strTeamBadge?: string;       // Logo
-  strTeamBanner?: string;      // Bannière
-  strDescriptionEN?: string;   // Description
-  intFormedYear?: string;      // Année de création
+  strTeam: string;
+  strTeamShort?: string;
+  strAlternate?: string;
+  strSport: string;
+  strLeague: string;
+  strDivision?: string;
+  strStadium?: string;
+  strLocation?: string;
+  strTeamBadge?: string;
+  strTeamBanner?: string;
+  strDescriptionEN?: string;
+  intFormedYear?: string;
 }
 
 export interface SportsDbResponse<T> {

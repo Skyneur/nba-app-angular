@@ -557,3 +557,30 @@ a {
     padding-right: 1rem;
   }
 }
+
+select.form-select,
+select.form-control {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border: 2px solid var(--border-color) !important;
+}
+
+select.form-select option,
+select.form-control option {
+  background-color: #1A1A1A !important;
+  color: #F9FAFB !important;
+  padding: 0.75rem !important;
+}
+
+select.form-select option:checked,
+select.form-control option:checked {
+  background-color: #2D2D2D !important;
+  color: var(--primary-color) !important;
+  background: linear-gradient(90deg, rgba(224, 34, 16, 0.2), rgba(224, 34, 16, 0.1)) !important;
+}
+
+select.form-select:focus,
+select.form-control:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 4px rgba(224, 34, 16, 0.15) !important;
+}

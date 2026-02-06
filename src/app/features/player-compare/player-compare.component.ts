@@ -20,7 +20,6 @@ export class PlayerCompareComponent implements OnInit {
   maxPlayers = 3;
 
   constructor() {
-    // Récupérer les joueurs depuis le state (navigation)
     const navigation = history.state;
     if (navigation.players) {
       this.selectedPlayers = navigation.players.slice(0, this.maxPlayers);

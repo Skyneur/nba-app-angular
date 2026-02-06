@@ -26,28 +26,21 @@ export class NbaApiService {
 
   private loadAllPlayers(): Observable<Player[]> {
     if (this.allPlayersCache.length > 0) {
-      console.log('📦 Cache:', this.allPlayersCache.length, 'joueurs');
       return of(this.allPlayersCache);
     }
 
     if (this.loadAllPlayersObservable$) {
-      console.log('⏳ Chargement en cours...');
       return this.loadAllPlayersObservable$;
     }
 
-    console.log('🔄 Chargement depuis votre API...');
     this.loadingSubject.next(true);
 
     const observable$ = this.http.get<Player[]>(this.API_URL).pipe(
       tap(players => {
         this.allPlayersCache = players;
-        console.log('✅ Total joueurs NBA:', players.length);
         this.loadAllPlayersObservable$ = null;
       }),
       catchError(err => {
-        console.error('❌ Erreur API:', err);
-        console.log('📁 Fallback vers données locales...');
-        // Fallback vers le fichier local si l'API ne répond pas
         return this.http.get<Player[]>('/assets/data/nba-players.json');
       }),
       tap(players => {
@@ -56,7 +49,6 @@ export class NbaApiService {
         }
       }),
       finalize(() => {
-        console.log('🏁 Terminé');
         this.loadingSubject.next(false);
       }),
       shareReplay(1)
@@ -79,6 +71,8 @@ export class NbaApiService {
             p.strPosition?.toLowerCase().includes(searchLower)
           );
         }
+
+        filteredPlayers.sort((a, b) => a.strPlayer.localeCompare(b.strPlayer));
 
         const startIndex = (page - 1) * perPage;
         const endIndex = startIndex + perPage;

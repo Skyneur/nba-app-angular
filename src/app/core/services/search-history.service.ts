@@ -46,10 +46,8 @@ export class SearchHistoryService {
 
     const current = this.history();
     
-    // Retirer le terme s'il existe déjà
     const filtered = current.filter(t => t.toLowerCase() !== trimmed.toLowerCase());
     
-    // Ajouter en première position
     const updated = [trimmed, ...filtered].slice(0, this.MAX_HISTORY);
     
     this.history.set(updated);

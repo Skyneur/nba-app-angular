@@ -31,11 +31,8 @@ export class PlayerListComponent implements OnInit, OnDestroy, AfterViewInit {
   searchControl = new FormControl('', { nonNullable: true });
   sortControl = new FormControl('name-asc', { nonNullable: true });
 
-  // Historique de recherche
   showHistory = false;
   dropdownStyle: any = {};
-  
-  // Filtre favoris
   showOnlyFavorites = false;
 
   players: Player[] = [];
@@ -46,12 +43,10 @@ export class PlayerListComponent implements OnInit, OnDestroy, AfterViewInit {
   totalPages = 1;
   perPage = 12;
 
-  // Infinite scroll
   @ViewChild('scrollTrigger') scrollTrigger!: ElementRef;
   private observer?: IntersectionObserver;
   isLoadingMore = false;
 
-  // Système de sélection pour comparaison
   selectedPlayers: Map<number, Player> = new Map();
   maxCompare = 3;
 
@@ -117,8 +112,6 @@ export class PlayerListComponent implements OnInit, OnDestroy, AfterViewInit {
         takeUntil(this.destroy$)
       )
       .subscribe(searchTerm => {
-        console.log('🔍 Recherche:', searchTerm);
-        
         this.currentPage = 1;
         this.loadPlayers(searchTerm);
       });
@@ -173,11 +166,9 @@ export class PlayerListComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.error = null;
 
-    // Si on affiche les favoris, utiliser directement les favoris stockés
     if (this.showOnlyFavorites) {
       const favorites = this.favoritesService.getFavorites();
       
-      // Filtrer par recherche si nécessaire
       let filteredFavorites = favorites;
       if (search && search.trim()) {
         const searchLower = search.toLowerCase();
@@ -212,7 +203,6 @@ export class PlayerListComponent implements OnInit, OnDestroy, AfterViewInit {
           this.sortPlayers();
           this.loading = false;
           this.isLoadingMore = false;
-          console.log('✅ Joueurs chargés:', this.players.length);
         },
         error: (err: Error) => {
           this.error = err.message;
@@ -221,7 +211,6 @@ export class PlayerListComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           this.loading = false;
           this.isLoadingMore = false;
-          console.error('❌ Erreur:', err.message);
         }
       });
   }
@@ -243,7 +232,6 @@ export class PlayerListComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loadPlayers(this.searchControl.value);
   }
 
-  // Historique de recherche
   onSearchKeydown(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
       const term = this.searchControl.value?.trim();
@@ -289,7 +277,6 @@ export class PlayerListComponent implements OnInit, OnDestroy, AfterViewInit {
     this.searchHistoryService.removeItem(term);
   }
 
-  // Enregistrer la recherche en cours si elle est valide
   private saveCurrentSearch(): void {
     const term = this.searchControl.value?.trim();
     if (term && term.length >= 2) {
@@ -297,24 +284,20 @@ export class PlayerListComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // Wrapper pour toggle favori avec enregistrement de recherche
   onToggleFavorite(player: Player): void {
     const wasFavorite = this.favoritesService.isFavorite(player.idPlayer);
     this.favoritesService.toggleFavorite(player);
     this.saveCurrentSearch();
     
-    // Si on est en mode favoris et qu'on vient de retirer un favori, recharger la liste
     if (this.showOnlyFavorites && wasFavorite) {
       this.loadPlayers(this.searchControl.value);
     }
   }
 
-  // Enregistrer la recherche avant de naviguer vers le profil
   onViewProfile(): void {
     this.saveCurrentSearch();
   }
 
-  // Méthodes de sélection pour comparaison
   togglePlayerSelection(player: Player): void {
     const playerId = typeof player.idPlayer === 'string' ? parseInt(player.idPlayer, 10) : player.idPlayer;
     
@@ -326,7 +309,6 @@ export class PlayerListComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     
-    // Enregistrer la recherche lors de la sélection
     this.saveCurrentSearch();
   }
 
